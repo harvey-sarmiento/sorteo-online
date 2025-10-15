@@ -1,431 +1,511 @@
-import React, { useState } from 'react';
-import { Users, Search, Ticket, Plus, Trash2, Archive, Download, FileText } from 'lucide-react';
+<!DOCTYPE html>
 
-export default function SorteoOnline() {
-  const [participantes, setParticipantes] = useState([]);
-  const [nombreNuevo, setNombreNuevo] = useState('');
-  const [busqueda, setBusqueda] = useState('');
-  const [vistaActual, setVistaActual] = useState('registro');
-  const [historialSorteos, setHistorialSorteos] = useState([]);
-  const [nombreSorteo, setNombreSorteo] = useState('');
-
-  // Generar 10 números aleatorios de 4 cifras únicos
-  const generarNumeros = () => {
-    const numeros = new Set();
-    while (numeros.size < 10) {
-      const numero = Math.floor(Math.random() * 10000).toString().padStart(4, '0');
-      numeros.add(numero);
-    }
-    return Array.from(numeros).sort();
-  };
-
-  // Agregar nuevo participante
-  const agregarParticipante = () => {
-    if (nombreNuevo.trim() === '') {
-      alert('Por favor ingresa un nombre');
-      return;
-    }
-
-    const yaExiste = participantes.some(
-      p => p.nombre.toLowerCase() === nombreNuevo.trim().toLowerCase()
-    );
-
-    if (yaExiste) {
-      alert('Este participante ya está registrado');
-      return;
-    }
-
-    const nuevoParticipante = {
-      id: Date.now(),
-      nombre: nombreNuevo.trim(),
-      numeros: generarNumeros(),
-      fecha: new Date().toLocaleString()
-    };
-
-    setParticipantes([...participantes, nuevoParticipante]);
-    setNombreNuevo('');
-  };
-
-  // Eliminar participante
-  const eliminarParticipante = (id) => {
-    if (confirm('¿Estás seguro de eliminar este participante?')) {
-      setParticipantes(participantes.filter(p => p.id !== id));
-    }
-  };
-
-  // Archivar sorteo actual e iniciar uno nuevo
-  const iniciarNuevoSorteo = () => {
-    if (participantes.length === 0) {
-      alert('No hay participantes para archivar');
-      return;
-    }
-
-    const confirmacion = confirm(
-      '¿Quieres archivar el sorteo actual e iniciar uno nuevo desde cero?\n\n' +
-      'El sorteo actual se guardará en el historial y podrás consultarlo después.'
-    );
-
-    if (!confirmacion) return;
-
-    const nombreDelSorteo = nombreSorteo || prompt(
-      'Dale un nombre a este sorteo (ejemplo: "Sorteo Navidad 2024", "Sorteo Octubre"):', 
-      `Sorteo ${new Date().toLocaleDateString()}`
-    );
-
-    if (!nombreDelSorteo) return;
-
-    const sorteoArchivado = {
-      id: Date.now(),
-      nombre: nombreDelSorteo,
-      participantes: [...participantes],
-      fecha: new Date().toLocaleString(),
-      totalParticipantes: participantes.length
-    };
-
-    setHistorialSorteos([sorteoArchivado, ...historialSorteos]);
-    setParticipantes([]);
-    setNombreSorteo('');
-    setBusqueda('');
-    setVistaActual('registro');
-    
-    alert('¡Sorteo archivado exitosamente! Puedes iniciar uno nuevo.');
-  };
-
-  // Eliminar sorteo del historial
-  const eliminarSorteoHistorial = (id) => {
-    if (confirm('¿Estás seguro de eliminar este sorteo del historial?')) {
-      setHistorialSorteos(historialSorteos.filter(s => s.id !== id));
-    }
-  };
-
-  // Exportar sorteo actual como texto
-  const exportarSorteoActual = () => {
-    if (participantes.length === 0) {
-      alert('No hay participantes para exportar');
-      return;
-    }
-
-    let texto = `═══════════════════════════════════════════════\n`;
-    texto += `       ${nombreSorteo || 'SORTEO ACTUAL'}\n`;
-    texto += `═══════════════════════════════════════════════\n`;
-    texto += `Fecha de exportación: ${new Date().toLocaleString()}\n`;
-    texto += `Total de participantes: ${participantes.length}\n`;
-    texto += `═══════════════════════════════════════════════\n\n`;
-
-    participantes.forEach((p, index) => {
-      texto += `${index + 1}. ${p.nombre.toUpperCase()}\n`;
-      texto += `   Registrado: ${p.fecha}\n`;
-      texto += `   Números asignados:\n`;
-      texto += `   ┌─────┬─────┬─────┬─────┬─────┐\n`;
-      texto += `   │ ${p.numeros.slice(0, 5).join(' │ ')} │\n`;
-      texto += `   ├─────┼─────┼─────┼─────┼─────┤\n`;
-      texto += `   │ ${p.numeros.slice(5, 10).join(' │ ')} │\n`;
-      texto += `   └─────┴─────┴─────┴─────┴─────┘\n\n`;
-    });
-
-    descargarTexto(texto, `sorteo-${Date.now()}.txt`);
-  };
-
-  // Exportar historial completo
-  const exportarHistorial = () => {
-    if (historialSorteos.length === 0) {
-      alert('No hay sorteos en el historial para exportar');
-      return;
-    }
-
-    let texto = `═══════════════════════════════════════════════\n`;
-    texto += `       HISTORIAL DE SORTEOS\n`;
-    texto += `═══════════════════════════════════════════════\n`;
-    texto += `Exportado: ${new Date().toLocaleString()}\n`;
-    texto += `Total de sorteos: ${historialSorteos.length}\n`;
-    texto += `═══════════════════════════════════════════════\n\n`;
-
-    historialSorteos.forEach((sorteo, idx) => {
-      texto += `\n${'═'.repeat(50)}\n`;
-      texto += `SORTEO ${idx + 1}: ${sorteo.nombre}\n`;
-      texto += `${'═'.repeat(50)}\n`;
-      texto += `Fecha: ${sorteo.fecha}\n`;
-      texto += `Participantes: ${sorteo.totalParticipantes}\n`;
-      texto += `${'─'.repeat(50)}\n\n`;
-
-      sorteo.participantes.forEach((p, index) => {
-        texto += `${index + 1}. ${p.nombre.toUpperCase()}\n`;
-        texto += `   Números: ${p.numeros.join(' - ')}\n\n`;
-      });
-    });
-
-    descargarTexto(texto, `historial-sorteos-${Date.now()}.txt`);
-  };
-
-  // Función auxiliar para descargar texto
-  const descargarTexto = (texto, nombreArchivo) => {
-    const blob = new Blob([texto], { type: 'text/plain;charset=utf-8' });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = nombreArchivo;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    URL.revokeObjectURL(url);
-  };
-
-  // Filtrar participantes según búsqueda
-  const participantesFiltrados = participantes.filter(p =>
-    p.nombre.toLowerCase().includes(busqueda.toLowerCase()) ||
-    p.numeros.some(num => num.includes(busqueda))
-  );
-
-  return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-600 via-pink-500 to-orange-400 p-4">
-      <div className="max-w-4xl mx-auto">
-        {/* Header */}
-        <div className="bg-white rounded-2xl shadow-2xl p-6 mb-6">
-          <div className="flex items-center justify-center gap-3 mb-4">
-            <Ticket className="w-10 h-10 text-purple-600" />
-            <h1 className="text-3xl font-bold text-gray-800">Sistema de Sorteo Online</h1>
-          </div>
-          <p className="text-center text-gray-600 mb-4">
-            Los datos se mantienen mientras no cierres esta pestaña
-          </p>
-          
-          {/* Nombre del sorteo actual */}
-          <div className="flex gap-2 items-center justify-center">
-            <input
-              type="text"
-              value={nombreSorteo}
-              onChange={(e) => setNombreSorteo(e.target.value)}
-              placeholder="Nombre del sorteo actual (opcional)"
-              className="px-4 py-2 border-2 border-gray-300 rounded-lg focus:border-purple-500 focus:outline-none text-center"
-            />
-          </div>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Sorteo Online</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container { max-width: 1200px; margin: 0 auto; }
+        .card {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        h1 {
+            text-align: center;
+            color: #667eea;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+        .status {
+            text-align: center;
+            color: #10b981;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+        input[type="text"] {
+            width: 100%;
+            padding: 15px;
+            font-size: 1.1em;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            margin-bottom: 10px;
+        }
+        input[type="text"]:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        .btn {
+            padding: 15px 30px;
+            font-size: 1em;
+            font-weight: bold;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        .btn-primary:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+        .btn-green {
+            background: #10b981;
+            color: white;
+        }
+        .btn-green:hover:not(:disabled) {
+            background: #059669;
+        }
+        .btn-blue {
+            background: #3b82f6;
+            color: white;
+        }
+        .btn-blue:hover:not(:disabled) {
+            background: #2563eb;
+        }
+        .btn-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        .tab {
+            flex: 1;
+            padding: 15px;
+            background: rgba(255,255,255,0.3);
+            border: none;
+            border-radius: 10px;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .tab.active {
+            background: white;
+            color: #667eea;
+        }
+        .input-group {
+            display: flex;
+            gap: 10px;
+        }
+        .participante {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        .participante-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 15px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #f3f4f6;
+        }
+        .participante-nombre {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #1f2937;
+        }
+        .participante-fecha {
+            font-size: 0.9em;
+            color: #6b7280;
+        }
+        .btn-delete {
+            background: #ef4444;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1.2em;
+        }
+        .btn-delete:hover {
+            background: #dc2626;
+        }
+        .numeros-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 10px;
+        }
+        .numero {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            font-size: 1.3em;
+            font-weight: bold;
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+        }
+        .empty-state {
+            text-align: center;
+            padding: 50px;
+            color: #6b7280;
+            font-size: 1.2em;
+        }
+        .historial-item {
+            border: 2px solid #e5e7eb;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 15px;
+        }
+        .historial-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+        .historial-nombre {
+            font-size: 1.3em;
+            font-weight: bold;
+        }
+        .historial-info {
+            color: #6b7280;
+            margin-bottom: 10px;
+        }
+        .historial-detalles {
+            background: #f9fafb;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 10px;
+        }
+        .historial-participante {
+            padding: 10px;
+            margin-bottom: 10px;
+            background: white;
+            border-radius: 5px;
+        }
+        details {
+            cursor: pointer;
+        }
+        summary {
+            color: #667eea;
+            font-weight: bold;
+            padding: 10px;
+        }
+        summary:hover {
+            background: #f3f4f6;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="card">
+            <h1>🎟️ Sistema de Sorteo Online</h1>
+            <div class="status">✅ Datos guardados automáticamente</div>
+            <input type="text" id="nombreSorteo" placeholder="Nombre del sorteo (opcional)">
         </div>
 
-        {/* Botones de acción principales */}
-        <div className="grid grid-cols-2 gap-3 mb-6">
-          <button
-            onClick={iniciarNuevoSorteo}
-            disabled={participantes.length === 0}
-            className="bg-green-500 hover:bg-green-600 disabled:bg-gray-400 disabled:cursor-not-allowed text-white py-3 px-4 rounded-xl font-semibold shadow-lg transition-all flex items-center justify-center gap-2"
-          >
-            <Archive className="w-5 h-5" />
-            Archivar y Nuevo Sorteo
-          </button>
-          <button
-            onClick={exportarSorteoActual}
-            disabled={participantes.length === 0}
-            className="bg-blue-500 hover:bg-blue-600 disabled:bg-gray-400 disabled:cursor-not-allowed text-white py-3 px-4 rounded-xl font-semibold shadow-lg transition-all flex items-center justify-center gap-2"
-          >
-            <Download className="w-5 h-5" />
-            Exportar Sorteo Actual
-          </button>
-        </div>
 
-        {/* Tabs */}
-        <div className="flex gap-2 mb-6">
-          <button
-            onClick={() => setVistaActual('registro')}
-            className={`flex-1 py-3 px-6 rounded-xl font-semibold transition-all ${
-              vistaActual === 'registro'
-                ? 'bg-white text-purple-600 shadow-lg'
-                : 'bg-white/30 text-white hover:bg-white/40'
-            }`}
-          >
-            <Plus className="w-5 h-5 inline mr-2" />
-            Registrar
-          </button>
-          <button
-            onClick={() => setVistaActual('buscar')}
-            className={`flex-1 py-3 px-6 rounded-xl font-semibold transition-all ${
-              vistaActual === 'buscar'
-                ? 'bg-white text-purple-600 shadow-lg'
-                : 'bg-white/30 text-white hover:bg-white/40'
-            }`}
-          >
-            <Search className="w-5 h-5 inline mr-2" />
-            Buscar
-          </button>
-          <button
-            onClick={() => setVistaActual('historial')}
-            className={`flex-1 py-3 px-6 rounded-xl font-semibold transition-all ${
-              vistaActual === 'historial'
-                ? 'bg-white text-purple-600 shadow-lg'
-                : 'bg-white/30 text-white hover:bg-white/40'
-            }`}
-          >
-            <Archive className="w-5 h-5 inline mr-2" />
-            Historial ({historialSorteos.length})
-          </button>
-        </div>
-
-        {/* Vista de Registro */}
-        {vistaActual === 'registro' && (
-          <div className="bg-white rounded-2xl shadow-2xl p-6 mb-6">
-            <h2 className="text-2xl font-bold text-gray-800 mb-4 flex items-center gap-2">
-              <Users className="w-6 h-6 text-purple-600" />
-              Registrar Nuevo Participante
-            </h2>
-            <div className="flex gap-3">
-              <input
-                type="text"
-                value={nombreNuevo}
-                onChange={(e) => setNombreNuevo(e.target.value)}
-                onKeyPress={(e) => e.key === 'Enter' && agregarParticipante()}
-                placeholder="Nombre del participante"
-                className="flex-1 px-4 py-3 border-2 border-gray-300 rounded-xl focus:border-purple-500 focus:outline-none text-lg"
-              />
-              <button
-                onClick={agregarParticipante}
-                className="bg-gradient-to-r from-purple-600 to-pink-500 text-white px-8 py-3 rounded-xl font-semibold hover:shadow-lg transition-all"
-              >
-                Agregar
-              </button>
-            </div>
-            
-            <div className="mt-6 p-4 bg-purple-50 rounded-xl">
-              <p className="text-sm text-gray-700">
-                <strong>Total de participantes:</strong> {participantes.length}
-              </p>
-            </div>
-          </div>
-        )}
-
-        {/* Vista de Búsqueda */}
-        {vistaActual === 'buscar' && (
-          <div className="bg-white rounded-2xl shadow-2xl p-6 mb-6">
-            <h2 className="text-2xl font-bold text-gray-800 mb-4 flex items-center gap-2">
-              <Search className="w-6 h-6 text-purple-600" />
-              Buscar Participante
-            </h2>
-            <input
-              type="text"
-              value={busqueda}
-              onChange={(e) => setBusqueda(e.target.value)}
-              placeholder="Busca por nombre o número..."
-              className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:border-purple-500 focus:outline-none text-lg"
-            />
-          </div>
-        )}
-
-        {/* Vista de Historial */}
-        {vistaActual === 'historial' && (
-          <div className="bg-white rounded-2xl shadow-2xl p-6 mb-6">
-            <div className="flex justify-between items-center mb-4">
-              <h2 className="text-2xl font-bold text-gray-800 flex items-center gap-2">
-                <Archive className="w-6 h-6 text-purple-600" />
-                Historial de Sorteos
-              </h2>
-              {historialSorteos.length > 0 && (
-                <button
-                  onClick={exportarHistorial}
-                  className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg font-semibold transition-all flex items-center gap-2"
-                >
-                  <FileText className="w-4 h-4" />
-                  Exportar Todo
-                </button>
-              )}
-            </div>
-            {historialSorteos.length === 0 ? (
-              <p className="text-gray-500 text-center py-8">No hay sorteos archivados todavía</p>
-            ) : (
-              <div className="space-y-4">
-                {historialSorteos.map((sorteo) => (
-                  <div key={sorteo.id} className="border-2 border-gray-200 rounded-xl p-4 hover:border-purple-300 transition-all">
-                    <div className="flex justify-between items-start mb-3">
-                      <div>
-                        <h3 className="font-bold text-lg text-gray-800">{sorteo.nombre}</h3>
-                        <p className="text-sm text-gray-500">
-                          {sorteo.fecha} • {sorteo.totalParticipantes} participantes
-                        </p>
-                      </div>
-                      <button
-                        onClick={() => eliminarSorteoHistorial(sorteo.id)}
-                        className="text-red-500 hover:text-red-700 hover:bg-red-50 p-2 rounded-lg transition-all"
-                      >
-                        <Trash2 className="w-5 h-5" />
-                      </button>
-                    </div>
-                    <details className="cursor-pointer">
-                      <summary className="text-purple-600 font-semibold hover:text-purple-700">
-                        Ver participantes ({sorteo.participantes.length})
-                      </summary>
-                      <div className="mt-3 space-y-2 max-h-64 overflow-y-auto">
-                        {sorteo.participantes.map((p) => (
-                          <div key={p.id} className="bg-gray-50 p-3 rounded-lg">
-                            <p className="font-semibold text-gray-800">{p.nombre}</p>
-                            <div className="flex flex-wrap gap-2 mt-2">
-                              {p.numeros.map((num, idx) => (
-                                <span key={idx} className="bg-purple-100 text-purple-700 px-2 py-1 rounded text-sm font-mono">
-                                  {num}
-                                </span>
-                              ))}
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    </details>
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
-        )}
-
-        {/* Lista de Participantes (solo en vista registro y buscar) */}
-        {(vistaActual === 'registro' || vistaActual === 'buscar') && (
-          <div className="space-y-4">
-            {participantesFiltrados.length === 0 ? (
-              <div className="bg-white rounded-2xl shadow-lg p-8 text-center">
-                <p className="text-gray-500 text-lg">
-                  {participantes.length === 0
-                    ? 'No hay participantes registrados'
-                    : 'No se encontraron resultados'}
-                </p>
-              </div>
-            ) : (
-              participantesFiltrados.map((participante) => (
-                <div
-                  key={participante.id}
-                  className="bg-white rounded-2xl shadow-lg p-6 hover:shadow-xl transition-all"
-                >
-                  <div className="flex justify-between items-start mb-4">
-                    <div>
-                      <h3 className="text-2xl font-bold text-gray-800">
-                        {participante.nombre}
-                      </h3>
-                      <p className="text-sm text-gray-500">
-                        Registrado: {participante.fecha}
-                      </p>
-                    </div>
-                    <button
-                      onClick={() => eliminarParticipante(participante.id)}
-                      className="text-red-500 hover:text-red-700 hover:bg-red-50 p-2 rounded-lg transition-all"
-                    >
-                      <Trash2 className="w-5 h-5" />
-                    </button>
-                  </div>
-                  
-                  <div className="border-t-2 border-gray-100 pt-4">
-                    <p className="text-sm font-semibold text-gray-600 mb-3">
-                      Números asignados:
-                    </p>
-                    <div className="grid grid-cols-5 gap-3">
-                      {participante.numeros.map((numero, idx) => (
-                        <div
-                          key={idx}
-                          className="bg-gradient-to-br from-purple-500 to-pink-500 text-white font-bold text-xl py-3 px-4 rounded-xl text-center shadow-md"
-                        >
-                          {numero}
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-              ))
-            )}
-          </div>
-        )}
-      </div>
+    <div class="btn-grid">
+        <button class="btn btn-green" id="btnArchivar">📦 Archivar y Nuevo Sorteo</button>
+        <button class="btn btn-blue" id="btnExportar">💾 Exportar Datos</button>
     </div>
-  );
-}
+
+    <div class="tabs">
+        <button class="tab active" data-tab="registro">➕ Registrar</button>
+        <button class="tab" data-tab="buscar">🔍 Buscar</button>
+        <button class="tab" data-tab="historial">📚 Historial (<span id="historialCount">0</span>)</button>
+    </div>
+
+    <div id="vistaRegistro" class="vista">
+        <div class="card">
+            <h2 style="margin-bottom: 20px;">👥 Nuevo Participante</h2>
+            <div class="input-group">
+                <input type="text" id="nombreParticipante" placeholder="Nombre del participante">
+                <button class="btn btn-primary" id="btnAgregar">Agregar</button>
+            </div>
+            <p style="margin-top: 15px; color: #6b7280;">Total: <span id="totalParticipantes">0</span> participantes</p>
+        </div>
+    </div>
+
+    <div id="vistaBuscar" class="vista" style="display: none;">
+        <div class="card">
+            <h2 style="margin-bottom: 20px;">🔍 Buscar Participante</h2>
+            <input type="text" id="busqueda" placeholder="Busca por nombre o número...">
+        </div>
+    </div>
+
+    <div id="vistaHistorial" class="vista" style="display: none;">
+        <div class="card">
+            <h2>📚 Historial de Sorteos</h2>
+            <div id="listaHistorial"></div>
+        </div>
+    </div>
+
+    <div id="listaParticipantes"></div>
+</div>
+
+<script>
+    let participantes = [];
+    let historial = [];
+    let nombreSorteo = '';
+    let vistaActual = 'registro';
+
+    // Cargar datos al iniciar
+    function cargarDatos() {
+        const datosGuardados = localStorage.getItem('sorteoActual');
+        const historialGuardado = localStorage.getItem('historialSorteos');
+        const nombreGuardado = localStorage.getItem('nombreSorteo');
+        
+        if (datosGuardados) participantes = JSON.parse(datosGuardados);
+        if (historialGuardado) historial = JSON.parse(historialGuardado);
+        if (nombreGuardado) {
+            nombreSorteo = nombreGuardado;
+            document.getElementById('nombreSorteo').value = nombreSorteo;
+        }
+        
+        actualizarVista();
+    }
+
+    // Guardar datos
+    function guardarDatos() {
+        localStorage.setItem('sorteoActual', JSON.stringify(participantes));
+        localStorage.setItem('historialSorteos', JSON.stringify(historial));
+        localStorage.setItem('nombreSorteo', nombreSorteo);
+    }
+
+    // Generar números aleatorios
+    function generarNumeros() {
+        const nums = new Set();
+        while (nums.size < 10) {
+            nums.add(String(Math.floor(Math.random() * 10000)).padStart(4, '0'));
+        }
+        return Array.from(nums).sort();
+    }
+
+    // Agregar participante
+    function agregarParticipante() {
+        const input = document.getElementById('nombreParticipante');
+        const nombre = input.value.trim();
+        
+        if (!nombre) {
+            alert('Por favor ingresa un nombre');
+            return;
+        }
+        
+        if (participantes.some(p => p.nombre.toLowerCase() === nombre.toLowerCase())) {
+            alert('Este participante ya está registrado');
+            return;
+        }
+        
+        participantes.push({
+            id: Date.now(),
+            nombre: nombre,
+            numeros: generarNumeros(),
+            fecha: new Date().toLocaleString()
+        });
+        
+        input.value = '';
+        guardarDatos();
+        actualizarVista();
+    }
+
+    // Eliminar participante
+    function eliminarParticipante(id) {
+        if (confirm('¿Estás seguro de eliminar este participante?')) {
+            participantes = participantes.filter(p => p.id !== id);
+            guardarDatos();
+            actualizarVista();
+        }
+    }
+
+    // Archivar sorteo
+    function archivarSorteo() {
+        if (participantes.length === 0) {
+            alert('No hay participantes para archivar');
+            return;
+        }
+        
+        if (!confirm('¿Archivar el sorteo actual e iniciar uno nuevo?')) return;
+        
+        const nombre = nombreSorteo || prompt('Nombre del sorteo:', 'Sorteo ' + new Date().toLocaleDateString());
+        if (!nombre) return;
+        
+        historial.unshift({
+            id: Date.now(),
+            nombre: nombre,
+            participantes: [...participantes],
+            fecha: new Date().toLocaleString(),
+            total: participantes.length
+        });
+        
+        participantes = [];
+        nombreSorteo = '';
+        document.getElementById('nombreSorteo').value = '';
+        
+        guardarDatos();
+        cambiarVista('registro');
+        alert('¡Sorteo archivado exitosamente!');
+    }
+
+    // Exportar datos
+    function exportarDatos() {
+        if (participantes.length === 0) {
+            alert('No hay participantes para exportar');
+            return;
+        }
+        
+        let texto = `═══════════════════════════════════════\n`;
+        texto += `SORTEO: ${nombreSorteo || 'Actual'}\n`;
+        texto += `═══════════════════════════════════════\n`;
+        texto += `Fecha: ${new Date().toLocaleString()}\n`;
+        texto += `Total: ${participantes.length} participantes\n\n`;
+        
+        participantes.forEach((p, i) => {
+            texto += `${i + 1}. ${p.nombre}\n`;
+            texto += `   Números: ${p.numeros.join(' - ')}\n\n`;
+        });
+        
+        const blob = new Blob([texto], { type: 'text/plain' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `sorteo-${Date.now()}.txt`;
+        a.click();
+        URL.revokeObjectURL(url);
+    }
+
+    // Cambiar vista
+    function cambiarVista(vista) {
+        vistaActual = vista;
+        
+        document.querySelectorAll('.vista').forEach(v => v.style.display = 'none');
+        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+        
+        document.getElementById(`vista${vista.charAt(0).toUpperCase() + vista.slice(1)}`).style.display = 'block';
+        document.querySelector(`[data-tab="${vista}"]`).classList.add('active');
+        
+        actualizarVista();
+    }
+
+    // Actualizar vista
+    function actualizarVista() {
+        document.getElementById('totalParticipantes').textContent = participantes.length;
+        document.getElementById('historialCount').textContent = historial.length;
+        
+        const btnArchivar = document.getElementById('btnArchivar');
+        const btnExportar = document.getElementById('btnExportar');
+        btnArchivar.disabled = participantes.length === 0;
+        btnExportar.disabled = participantes.length === 0;
+        
+        if (vistaActual === 'historial') {
+            mostrarHistorial();
+        } else {
+            mostrarParticipantes();
+        }
+    }
+
+    // Mostrar participantes
+    function mostrarParticipantes() {
+        const busqueda = document.getElementById('busqueda').value.toLowerCase();
+        const filtrados = participantes.filter(p => 
+            p.nombre.toLowerCase().includes(busqueda) ||
+            p.numeros.some(n => n.includes(busqueda))
+        );
+        
+        const lista = document.getElementById('listaParticipantes');
+        
+        if (filtrados.length === 0) {
+            lista.innerHTML = '<div class="card empty-state">No hay participantes</div>';
+            return;
+        }
+        
+        lista.innerHTML = filtrados.map(p => `
+            <div class="participante">
+                <div class="participante-header">
+                    <div>
+                        <div class="participante-nombre">${p.nombre}</div>
+                        <div class="participante-fecha">Registrado: ${p.fecha}</div>
+                    </div>
+                    <button class="btn-delete" onclick="eliminarParticipante(${p.id})">🗑️</button>
+                </div>
+                <div>
+                    <p style="font-weight: bold; margin-bottom: 10px;">Números asignados:</p>
+                    <div class="numeros-grid">
+                        ${p.numeros.map(n => `<div class="numero">${n}</div>`).join('')}
+                    </div>
+                </div>
+            </div>
+        `).join('');
+    }
+
+    // Mostrar historial
+    function mostrarHistorial() {
+        const lista = document.getElementById('listaHistorial');
+        
+        if (historial.length === 0) {
+            lista.innerHTML = '<div class="empty-state">No hay sorteos archivados</div>';
+            return;
+        }
+        
+        lista.innerHTML = historial.map(s => `
+            <div class="historial-item">
+                <div class="historial-header">
+                    <div>
+                        <div class="historial-nombre">${s.nombre}</div>
+                        <div class="historial-info">${s.fecha} • ${s.total} participantes</div>
+                    </div>
+                </div>
+                <details>
+                    <summary>Ver participantes</summary>
+                    <div class="historial-detalles">
+                        ${s.participantes.map(p => `
+                            <div class="historial-participante">
+                                <strong>${p.nombre}</strong><br>
+                                <small>${p.numeros.join(' - ')}</small>
+                            </div>
+                        `).join('')}
+                    </div>
+                </details>
+            </div>
+        `).join('');
+    }
+
+    // Event listeners
+    document.getElementById('btnAgregar').addEventListener('click', agregarParticipante);
+    document.getElementById('nombreParticipante').addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') agregarParticipante();
+    });
+    document.getElementById('btnArchivar').addEventListener('click', archivarSorteo);
+    document.getElementById('btnExportar').addEventListener('click', exportarDatos);
+    document.getElementById('nombreSorteo').addEventListener('input', (e) => {
+        nombreSorteo = e.target.value;
+        guardarDatos();
+    });
+    document.getElementById('busqueda').addEventListener('input', actualizarVista);
+    
+    document.querySelectorAll('.tab').forEach(tab => {
+        tab.addEventListener('click', () => cambiarVista(tab.dataset.tab));
+    });
+
+    // Inicializar
+    cargarDatos();
+</script>
+
+
+</body>
+</html>
