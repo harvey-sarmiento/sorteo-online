@@ -4,506 +4,354 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sistema de Sorteo Online</title>
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
-            min-height: 100vh;
-            padding: 20px;
-        }
-        .container { max-width: 1200px; margin: 0 auto; }
-        .card {
-            background: white;
-            border-radius: 20px;
-            padding: 30px;
-            margin-bottom: 20px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-        }
-        h1 {
-            text-align: center;
-            color: #667eea;
-            font-size: 2.5em;
-            margin-bottom: 10px;
-        }
-        .status {
-            text-align: center;
-            color: #10b981;
-            font-weight: bold;
-            margin-bottom: 20px;
-        }
-        input[type="text"] {
-            width: 100%;
-            padding: 15px;
-            font-size: 1.1em;
-            border: 2px solid #ddd;
-            border-radius: 10px;
-            margin-bottom: 10px;
-        }
-        input[type="text"]:focus {
-            outline: none;
-            border-color: #667eea;
-        }
-        .btn {
-            padding: 15px 30px;
-            font-size: 1em;
-            font-weight: bold;
-            border: none;
-            border-radius: 10px;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-        .btn:disabled {
-            background: #ccc;
-            cursor: not-allowed;
-        }
-        .btn-primary {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-        }
-        .btn-primary:hover:not(:disabled) {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
-        }
-        .btn-green {
-            background: #10b981;
-            color: white;
-        }
-        .btn-green:hover:not(:disabled) {
-            background: #059669;
-        }
-        .btn-blue {
-            background: #3b82f6;
-            color: white;
-        }
-        .btn-blue:hover:not(:disabled) {
-            background: #2563eb;
-        }
-        .btn-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 15px;
-            margin-bottom: 20px;
-        }
-        .tabs {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 20px;
-        }
-        .tab {
-            flex: 1;
-            padding: 15px;
-            background: rgba(255,255,255,0.3);
-            border: none;
-            border-radius: 10px;
-            color: white;
-            font-weight: bold;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-        .tab.active {
-            background: white;
-            color: #667eea;
-        }
-        .input-group {
-            display: flex;
-            gap: 10px;
-        }
-        .participante {
-            background: white;
-            border-radius: 15px;
-            padding: 25px;
-            margin-bottom: 15px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-        }
-        .participante-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: start;
-            margin-bottom: 15px;
-            padding-bottom: 15px;
-            border-bottom: 2px solid #f3f4f6;
-        }
-        .participante-nombre {
-            font-size: 1.5em;
-            font-weight: bold;
-            color: #1f2937;
-        }
-        .participante-fecha {
-            font-size: 0.9em;
-            color: #6b7280;
-        }
-        .btn-delete {
-            background: #ef4444;
-            color: white;
-            border: none;
-            padding: 8px 15px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 1.2em;
-        }
-        .btn-delete:hover {
-            background: #dc2626;
-        }
-        .numeros-grid {
-            display: grid;
-            grid-template-columns: repeat(5, 1fr);
-            gap: 10px;
-        }
-        .numero {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            font-size: 1.3em;
-            font-weight: bold;
-            padding: 15px;
-            border-radius: 10px;
-            text-align: center;
-        }
-        .empty-state {
-            text-align: center;
-            padding: 50px;
-            color: #6b7280;
-            font-size: 1.2em;
-        }
-        .historial-item {
-            border: 2px solid #e5e7eb;
-            border-radius: 10px;
-            padding: 20px;
-            margin-bottom: 15px;
-        }
-        .historial-header {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 10px;
-        }
-        .historial-nombre {
-            font-size: 1.3em;
-            font-weight: bold;
-        }
-        .historial-info {
-            color: #6b7280;
-            margin-bottom: 10px;
-        }
-        .historial-detalles {
-            background: #f9fafb;
-            padding: 15px;
-            border-radius: 8px;
-            margin-top: 10px;
-        }
-        .historial-participante {
-            padding: 10px;
-            margin-bottom: 10px;
-            background: white;
-            border-radius: 5px;
-        }
-        details {
-            cursor: pointer;
-        }
-        summary {
-            color: #667eea;
-            font-weight: bold;
-            padding: 10px;
-        }
-        summary:hover {
-            background: #f3f4f6;
-            border-radius: 5px;
-        }
-    </style>
+    <title>Evento Online - Harvey Sarmiento</title>
+    <meta name="description" content="Evento Online Exclusivo - Harvey Sarmiento. Gran Premio: 2 Meses de Acompañamiento + $300,000 COP">
+
+
+<script src="https://cdn.tailwindcss.com"></script>
+<script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+<script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+<script src="https://unpkg.com/lucide@latest"></script>
+
+<style>
+    body {
+        margin: 0;
+        padding: 0;
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+    }
+    #root {
+        min-height: 100vh;
+    }
+</style>
+
+
 </head>
 <body>
-    <div class="container">
-        <div class="card">
-            <h1>🎟️ Sistema de Sorteo Online</h1>
-            <div class="status">✅ Datos guardados automáticamente</div>
-            <input type="text" id="nombreSorteo" placeholder="Nombre del sorteo (opcional)">
-        </div>
+    <div id="root"></div>
 
 
-    <div class="btn-grid">
-        <button class="btn btn-green" id="btnArchivar">📦 Archivar y Nuevo Sorteo</button>
-        <button class="btn btn-blue" id="btnExportar">💾 Exportar Datos</button>
-    </div>
+<script type="text/babel">
+    const { useState, useEffect } = React;
+    const { Gift, Zap, TrendingUp, Award, DollarSign, Users, Send, Crown } = lucide;
 
-    <div class="tabs">
-        <button class="tab active" data-tab="registro">➕ Registrar</button>
-        <button class="tab" data-tab="buscar">🔍 Buscar</button>
-        <button class="tab" data-tab="historial">📚 Historial (<span id="historialCount">0</span>)</button>
-    </div>
+    function EventoOnline() {
+        const [eventActive, setEventActive] = useState(true);
+        const [progress, setProgress] = useState(5);
+        const [surpriseNumbers, setSurpriseNumbers] = useState([]);
+        const [showAdmin, setShowAdmin] = useState(false);
+        const [isAuthenticated, setIsAuthenticated] = useState(false);
+        const [passwordInput, setPasswordInput] = useState('');
+        const [showPasswordError, setShowPasswordError] = useState(false);
 
-    <div id="vistaRegistro" class="vista">
-        <div class="card">
-            <h2 style="margin-bottom: 20px;">👥 Nuevo Participante</h2>
-            <div class="input-group">
-                <input type="text" id="nombreParticipante" placeholder="Nombre del participante">
-                <button class="btn btn-primary" id="btnAgregar">Agregar</button>
-            </div>
-            <p style="margin-top: 15px; color: #6b7280;">Total: <span id="totalParticipantes">0</span> participantes</p>
-        </div>
-    </div>
+        const ADMIN_PASSWORD = '123510201819';
+        const paymentLink = 'https://checkout.bold.co/payment/LNK_ZNBQIFJLGN';
+        const whatsappNumber = '573015619137';
+        const whatsappMessage = encodeURIComponent('¡Hola Harvey! Ya realicé el pago de los 10 stickers. Te envío el comprobante 📸');
 
-    <div id="vistaBuscar" class="vista" style="display: none;">
-        <div class="card">
-            <h2 style="margin-bottom: 20px;">🔍 Buscar Participante</h2>
-            <input type="text" id="busqueda" placeholder="Busca por nombre o número...">
-        </div>
-    </div>
+        useEffect(() => {
+            if (eventActive && surpriseNumbers.length === 0) {
+                generateSurpriseNumbers();
+            }
+        }, [eventActive]);
 
-    <div id="vistaHistorial" class="vista" style="display: none;">
-        <div class="card">
-            <h2>📚 Historial de Sorteos</h2>
-            <div id="listaHistorial"></div>
-        </div>
-    </div>
+        useEffect(() => {
+            if (!eventActive) return;
+            const progressSteps = [5, 10, 20, 35, 50, 65, 75, 85, 90, 95];
+            let currentStep = 0;
+            const interval = setInterval(() => {
+                if (currentStep < progressSteps.length) {
+                    setProgress(progressSteps[currentStep]);
+                    currentStep++;
+                }
+            }, 45000);
+            return () => clearInterval(interval);
+        }, [eventActive]);
 
-    <div id="listaParticipantes"></div>
-</div>
+        const generateSurpriseNumbers = () => {
+            const numbers = new Set();
+            while (numbers.size < 10) {
+                numbers.add(Math.floor(1000 + Math.random() * 9000));
+            }
+            setSurpriseNumbers(Array.from(numbers).sort((a, b) => a - b));
+        };
 
-<script>
-    let participantes = [];
-    let historial = [];
-    let nombreSorteo = '';
-    let vistaActual = 'registro';
+        const startNewEvent = () => {
+            setEventActive(true);
+            setProgress(5);
+            generateSurpriseNumbers();
+            setShowAdmin(false);
+            setIsAuthenticated(false);
+            setPasswordInput('');
+        };
 
-    // Cargar datos al iniciar
-    function cargarDatos() {
-        const datosGuardados = localStorage.getItem('sorteoActual');
-        const historialGuardado = localStorage.getItem('historialSorteos');
-        const nombreGuardado = localStorage.getItem('nombreSorteo');
-        
-        if (datosGuardados) participantes = JSON.parse(datosGuardados);
-        if (historialGuardado) historial = JSON.parse(historialGuardado);
-        if (nombreGuardado) {
-            nombreSorteo = nombreGuardado;
-            document.getElementById('nombreSorteo').value = nombreSorteo;
-        }
-        
-        actualizarVista();
-    }
+        const endEvent = () => {
+            setEventActive(false);
+            setSurpriseNumbers([]);
+            setShowAdmin(false);
+            setIsAuthenticated(false);
+            setPasswordInput('');
+        };
 
-    // Guardar datos
-    function guardarDatos() {
-        localStorage.setItem('sorteoActual', JSON.stringify(participantes));
-        localStorage.setItem('historialSorteos', JSON.stringify(historial));
-        localStorage.setItem('nombreSorteo', nombreSorteo);
-    }
+        const handlePasswordSubmit = () => {
+            if (passwordInput === ADMIN_PASSWORD) {
+                setIsAuthenticated(true);
+                setShowPasswordError(false);
+                setPasswordInput('');
+            } else {
+                setShowPasswordError(true);
+                setTimeout(() => setShowPasswordError(false), 3000);
+            }
+        };
 
-    // Generar números aleatorios
-    function generarNumeros() {
-        const nums = new Set();
-        while (nums.size < 10) {
-            nums.add(String(Math.floor(Math.random() * 10000)).padStart(4, '0'));
-        }
-        return Array.from(nums).sort();
-    }
+        const handlePurchase = () => {
+            window.open(paymentLink, '_blank');
+            setTimeout(() => {
+                window.open(`https://wa.me/${whatsappNumber}?text=${whatsappMessage}`, '_blank');
+            }, 2000);
+        };
 
-    // Agregar participante
-    function agregarParticipante() {
-        const input = document.getElementById('nombreParticipante');
-        const nombre = input.value.trim();
-        
-        if (!nombre) {
-            alert('Por favor ingresa un nombre');
-            return;
-        }
-        
-        if (participantes.some(p => p.nombre.toLowerCase() === nombre.toLowerCase())) {
-            alert('Este participante ya está registrado');
-            return;
-        }
-        
-        participantes.push({
-            id: Date.now(),
-            nombre: nombre,
-            numeros: generarNumeros(),
-            fecha: new Date().toLocaleString()
-        });
-        
-        input.value = '';
-        guardarDatos();
-        actualizarVista();
-    }
-
-    // Eliminar participante
-    function eliminarParticipante(id) {
-        if (confirm('¿Estás seguro de eliminar este participante?')) {
-            participantes = participantes.filter(p => p.id !== id);
-            guardarDatos();
-            actualizarVista();
-        }
-    }
-
-    // Archivar sorteo
-    function archivarSorteo() {
-        if (participantes.length === 0) {
-            alert('No hay participantes para archivar');
-            return;
-        }
-        
-        if (!confirm('¿Archivar el sorteo actual e iniciar uno nuevo?')) return;
-        
-        const nombre = nombreSorteo || prompt('Nombre del sorteo:', 'Sorteo ' + new Date().toLocaleDateString());
-        if (!nombre) return;
-        
-        historial.unshift({
-            id: Date.now(),
-            nombre: nombre,
-            participantes: [...participantes],
-            fecha: new Date().toLocaleString(),
-            total: participantes.length
-        });
-        
-        participantes = [];
-        nombreSorteo = '';
-        document.getElementById('nombreSorteo').value = '';
-        
-        guardarDatos();
-        cambiarVista('registro');
-        alert('¡Sorteo archivado exitosamente!');
-    }
-
-    // Exportar datos
-    function exportarDatos() {
-        if (participantes.length === 0) {
-            alert('No hay participantes para exportar');
-            return;
-        }
-        
-        let texto = `═══════════════════════════════════════\n`;
-        texto += `SORTEO: ${nombreSorteo || 'Actual'}\n`;
-        texto += `═══════════════════════════════════════\n`;
-        texto += `Fecha: ${new Date().toLocaleString()}\n`;
-        texto += `Total: ${participantes.length} participantes\n\n`;
-        
-        participantes.forEach((p, i) => {
-            texto += `${i + 1}. ${p.nombre}\n`;
-            texto += `   Números: ${p.numeros.join(' - ')}\n\n`;
-        });
-        
-        const blob = new Blob([texto], { type: 'text/plain' });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = `sorteo-${Date.now()}.txt`;
-        a.click();
-        URL.revokeObjectURL(url);
-    }
-
-    // Cambiar vista
-    function cambiarVista(vista) {
-        vistaActual = vista;
-        
-        document.querySelectorAll('.vista').forEach(v => v.style.display = 'none');
-        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-        
-        document.getElementById(`vista${vista.charAt(0).toUpperCase() + vista.slice(1)}`).style.display = 'block';
-        document.querySelector(`[data-tab="${vista}"]`).classList.add('active');
-        
-        actualizarVista();
-    }
-
-    // Actualizar vista
-    function actualizarVista() {
-        document.getElementById('totalParticipantes').textContent = participantes.length;
-        document.getElementById('historialCount').textContent = historial.length;
-        
-        const btnArchivar = document.getElementById('btnArchivar');
-        const btnExportar = document.getElementById('btnExportar');
-        btnArchivar.disabled = participantes.length === 0;
-        btnExportar.disabled = participantes.length === 0;
-        
-        if (vistaActual === 'historial') {
-            mostrarHistorial();
-        } else {
-            mostrarParticipantes();
-        }
-    }
-
-    // Mostrar participantes
-    function mostrarParticipantes() {
-        const busqueda = document.getElementById('busqueda').value.toLowerCase();
-        const filtrados = participantes.filter(p => 
-            p.nombre.toLowerCase().includes(busqueda) ||
-            p.numeros.some(n => n.includes(busqueda))
-        );
-        
-        const lista = document.getElementById('listaParticipantes');
-        
-        if (filtrados.length === 0) {
-            lista.innerHTML = '<div class="card empty-state">No hay participantes</div>';
-            return;
-        }
-        
-        lista.innerHTML = filtrados.map(p => `
-            <div class="participante">
-                <div class="participante-header">
-                    <div>
-                        <div class="participante-nombre">${p.nombre}</div>
-                        <div class="participante-fecha">Registrado: ${p.fecha}</div>
-                    </div>
-                    <button class="btn-delete" onclick="eliminarParticipante(${p.id})">🗑️</button>
-                </div>
-                <div>
-                    <p style="font-weight: bold; margin-bottom: 10px;">Números asignados:</p>
-                    <div class="numeros-grid">
-                        ${p.numeros.map(n => `<div class="numero">${n}</div>`).join('')}
-                    </div>
-                </div>
-            </div>
-        `).join('');
-    }
-
-    // Mostrar historial
-    function mostrarHistorial() {
-        const lista = document.getElementById('listaHistorial');
-        
-        if (historial.length === 0) {
-            lista.innerHTML = '<div class="empty-state">No hay sorteos archivados</div>';
-            return;
-        }
-        
-        lista.innerHTML = historial.map(s => `
-            <div class="historial-item">
-                <div class="historial-header">
-                    <div>
-                        <div class="historial-nombre">${s.nombre}</div>
-                        <div class="historial-info">${s.fecha} • ${s.total} participantes</div>
-                    </div>
-                </div>
-                <details>
-                    <summary>Ver participantes</summary>
-                    <div class="historial-detalles">
-                        ${s.participantes.map(p => `
-                            <div class="historial-participante">
-                                <strong>${p.nombre}</strong><br>
-                                <small>${p.numeros.join(' - ')}</small>
+        if (!eventActive) {
+            return (
+                <div className="min-h-screen bg-gradient-to-br from-gray-900 via-black to-gray-900 flex items-center justify-center p-4">
+                    <div className="text-center bg-gradient-to-br from-gray-800 to-gray-900 rounded-3xl shadow-2xl p-12 max-w-md border border-yellow-600/30">
+                        <div className="w-20 h-20 bg-gradient-to-br from-yellow-400 via-yellow-500 to-amber-600 rounded-full mx-auto mb-6 flex items-center justify-center">
+                            <i data-lucide="crown" className="w-10 h-10 text-black"></i>
+                        </div>
+                        <h2 className="text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 to-amber-600 mb-4">Evento Finalizado</h2>
+                        <p className="text-gray-400 mb-8">Pronto iniciaremos un nuevo sorteo</p>
+                        <button onClick={() => setShowAdmin(!showAdmin)} className="text-gray-600 text-sm hover:text-gray-400">Admin</button>
+                        {showAdmin && !isAuthenticated && (
+                            <div className="fixed inset-0 bg-black/90 flex items-center justify-center z-50 p-4">
+                                <div className="bg-gradient-to-br from-gray-800 to-gray-900 rounded-3xl p-8 max-w-md w-full shadow-2xl border border-yellow-600/30">
+                                    <h3 className="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 to-amber-600 mb-4 text-center">🔐 Acceso Administrativo</h3>
+                                    <input 
+                                        type="password" 
+                                        value={passwordInput} 
+                                        onChange={(e) => setPasswordInput(e.target.value)} 
+                                        onKeyDown={(e) => e.key === 'Enter' && handlePasswordSubmit()} 
+                                        placeholder="Ingresa la contraseña" 
+                                        className="w-full px-4 py-3 bg-gray-900 text-white rounded-lg mb-4 focus:outline-none focus:ring-2 focus:ring-yellow-500 border border-gray-700" 
+                                        autoFocus 
+                                    />
+                                    {showPasswordError && <p className="text-red-500 text-sm mb-4 text-center">❌ Contraseña incorrecta</p>}
+                                    <div className="flex gap-3">
+                                        <button 
+                                            onClick={() => { setShowAdmin(false); setPasswordInput(''); setShowPasswordError(false); }} 
+                                            className="flex-1 px-4 py-3 bg-gray-700 text-gray-300 rounded-lg hover:bg-gray-600 font-semibold"
+                                        >
+                                            Cancelar
+                                        </button>
+                                        <button 
+                                            onClick={handlePasswordSubmit} 
+                                            className="flex-1 px-4 py-3 bg-gradient-to-r from-yellow-400 to-amber-600 text-black rounded-lg hover:from-yellow-500 hover:to-amber-700 font-semibold"
+                                        >
+                                            Entrar
+                                        </button>
+                                    </div>
+                                </div>
                             </div>
-                        `).join('')}
+                        )}
+                        {showAdmin && isAuthenticated && (
+                            <button 
+                                onClick={startNewEvent} 
+                                className="mt-4 px-6 py-3 bg-gradient-to-r from-yellow-400 to-amber-600 text-black rounded-lg font-semibold hover:from-yellow-500 hover:to-amber-700 shadow-lg"
+                            >
+                                Iniciar Nuevo Evento
+                            </button>
+                        )}
                     </div>
-                </details>
+                </div>
+            );
+        }
+
+        return (
+            <div className="min-h-screen bg-gradient-to-br from-gray-900 via-black to-gray-900">
+                <button 
+                    onClick={() => setShowAdmin(!showAdmin)} 
+                    className="fixed top-4 right-4 text-xs text-gray-700 opacity-30 hover:opacity-100 z-40"
+                >
+                    •••
+                </button>
+
+                {showAdmin && !isAuthenticated && (
+                    <div className="fixed inset-0 bg-black/90 flex items-center justify-center z-50 p-4">
+                        <div className="bg-gradient-to-br from-gray-800 to-gray-900 rounded-3xl p-8 max-w-md w-full shadow-2xl border border-yellow-600/30">
+                            <h3 className="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 to-amber-600 mb-4 text-center">🔐 Acceso Administrativo</h3>
+                            <input 
+                                type="password" 
+                                value={passwordInput} 
+                                onChange={(e) => setPasswordInput(e.target.value)} 
+                                onKeyDown={(e) => e.key === 'Enter' && handlePasswordSubmit()} 
+                                placeholder="Ingresa la contraseña" 
+                                className="w-full px-4 py-3 bg-gray-900 text-white rounded-lg mb-4 focus:outline-none focus:ring-2 focus:ring-yellow-500 border border-gray-700" 
+                                autoFocus 
+                            />
+                            {showPasswordError && <p className="text-red-500 text-sm mb-4 text-center">❌ Contraseña incorrecta</p>}
+                            <div className="flex gap-3">
+                                <button 
+                                    onClick={() => { setShowAdmin(false); setPasswordInput(''); setShowPasswordError(false); }} 
+                                    className="flex-1 px-4 py-3 bg-gray-700 text-gray-300 rounded-lg hover:bg-gray-600 font-semibold"
+                                >
+                                    Cancelar
+                                </button>
+                                <button 
+                                    onClick={handlePasswordSubmit} 
+                                    className="flex-1 px-4 py-3 bg-gradient-to-r from-yellow-400 to-amber-600 text-black rounded-lg hover:from-yellow-500 hover:to-amber-700 font-semibold"
+                                >
+                                    Entrar
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                )}
+
+                {showAdmin && isAuthenticated && (
+                    <div className="fixed top-16 right-4 bg-gradient-to-br from-gray-800 to-gray-900 border border-yellow-600/30 p-4 rounded-2xl shadow-2xl z-50">
+                        <p className="text-yellow-400 text-xs mb-3 text-center font-semibold">✓ Autenticado</p>
+                        <button 
+                            onClick={endEvent} 
+                            className="px-4 py-2 bg-gradient-to-r from-red-500 to-red-700 text-white rounded-lg hover:from-red-600 hover:to-red-800 text-sm w-full font-semibold"
+                        >
+                            Terminar Evento
+                        </button>
+                    </div>
+                )}
+
+                <div className="container mx-auto px-4 py-8 max-w-4xl">
+                    <div className="text-center mb-8">
+                        <div className="inline-block bg-gradient-to-r from-yellow-400 via-amber-500 to-yellow-600 text-black px-8 py-3 rounded-full font-bold text-sm mb-6 shadow-lg animate-pulse">
+                            🔥 EVENTO ONLINE EXCLUSIVO 🔥
+                        </div>
+                        <h1 className="text-5xl md:text-6xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 via-amber-500 to-yellow-600 mb-4 drop-shadow-lg">
+                            Harvey Sarmiento
+                        </h1>
+                        <p className="text-2xl md:text-3xl font-bold text-gray-300">
+                            Resultados Garantizados desde tus primeros 10 días
+                        </p>
+                    </div>
+
+                    <div className="bg-gradient-to-br from-gray-800/50 to-gray-900/50 backdrop-blur-sm border border-yellow-600/30 rounded-3xl p-6 mb-8 shadow-2xl">
+                        <div className="flex items-center justify-between mb-3">
+                            <span className="text-white font-bold flex items-center gap-2">
+                                <i data-lucide="trending-up" className="w-5 h-5 text-yellow-400"></i>
+                                Stickers Vendidos
+                            </span>
+                            <span className="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 to-amber-600">{progress}%</span>
+                        </div>
+                        <div className="w-full bg-gray-700 rounded-full h-6 overflow-hidden border border-gray-600">
+                            <div 
+                                className="bg-gradient-to-r from-yellow-400 via-amber-500 to-yellow-600 h-full rounded-full transition-all duration-1000 flex items-center justify-end pr-2" 
+                                style={{ width: `${progress}%` }}
+                            >
+                                <i data-lucide="zap" className="w-4 h-4 text-black"></i>
+                            </div>
+                        </div>
+                        <p className="text-yellow-400 text-sm mt-3 font-bold text-center">
+                            ⚡ ¡Quedan pocos! No te quedes sin tu oportunidad
+                        </p>
+                    </div>
+
+                    <div className="bg-gradient-to-br from-yellow-600/20 via-amber-600/20 to-yellow-700/20 backdrop-blur-sm border-2 border-yellow-500/50 rounded-3xl p-8 mb-8 shadow-2xl">
+                        <div className="text-center">
+                            <i data-lucide="crown" className="w-16 h-16 mx-auto mb-4 text-yellow-400"></i>
+                            <h2 className="text-3xl md:text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 to-amber-600 mb-3">
+                                🎊 GRAN PREMIO 🎊
+                            </h2>
+                            <div className="bg-black/30 rounded-2xl p-6 backdrop-blur-sm border border-yellow-600/30">
+                                <div className="flex items-center justify-center gap-3 mb-4">
+                                    <i data-lucide="users" className="w-8 h-8 text-yellow-400"></i>
+                                    <p className="text-2xl font-bold text-white">2 Meses de Acompañamiento Personalizado</p>
+                                </div>
+                                <div className="flex items-center justify-center gap-3">
+                                    <i data-lucide="dollar-sign" className="w-8 h-8 text-yellow-400"></i>
+                                    <p className="text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 to-amber-600">$300,000 COP en Efectivo</p>
+                                </div>
+                            </div>
+                            <p className="mt-4 text-lg font-semibold text-gray-300">¡Uno de los stickers sorpresa será el ganador!</p>
+                        </div>
+                    </div>
+
+                    <div className="bg-gradient-to-br from-gray-800/50 to-gray-900/50 backdrop-blur-sm border-2 border-yellow-600/50 rounded-3xl p-8 mb-8 shadow-2xl">
+                        <div className="text-center mb-6">
+                            <p className="text-gray-400 text-lg mb-2 font-semibold">Adquiere tus</p>
+                            <p className="text-6xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 to-amber-600 mb-2">10 Stickers</p>
+                            <p className="text-5xl font-bold text-white">$12,000 COP</p>
+                        </div>
+                        
+                        <button 
+                            onClick={handlePurchase} 
+                            className="w-full bg-gradient-to-r from-yellow-400 via-amber-500 to-yellow-600 text-black text-2xl font-bold py-6 rounded-2xl hover:shadow-2xl transform hover:scale-105 transition-all shadow-lg mb-6 hover:from-yellow-500 hover:via-amber-600 hover:to-yellow-700"
+                        >
+                            🎁 COMPRAR AHORA
+                        </button>
+
+                        <div className="bg-black/30 rounded-2xl p-6 border border-yellow-600/30">
+                            <h3 className="text-center font-bold text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 to-amber-600 mb-4 text-lg">
+                                📋 Proceso Automático:
+                            </h3>
+                            <div className="space-y-3">
+                                <div className="flex items-start gap-3">
+                                    <div className="w-8 h-8 bg-gradient-to-br from-yellow-400 to-amber-600 rounded-full flex items-center justify-center text-black font-bold flex-shrink-0">1</div>
+                                    <p className="text-gray-300"><span className="font-bold text-white">Realiza tu pago</span> haciendo clic en "Comprar Ahora"</p>
+                                </div>
+                                <div className="flex items-start gap-3">
+                                    <div className="w-8 h-8 bg-gradient-to-br from-yellow-400 to-amber-600 rounded-full flex items-center justify-center text-black font-bold flex-shrink-0">2</div>
+                                    <p className="text-gray-300"><span className="font-bold text-white">Envía tu comprobante</span> por WhatsApp automáticamente</p>
+                                </div>
+                                <div className="flex items-start gap-3">
+                                    <div className="w-8 h-8 bg-gradient-to-br from-yellow-400 to-amber-600 rounded-full flex items-center justify-center text-black font-bold flex-shrink-0">3</div>
+                                    <p className="text-gray-300"><span className="font-bold text-yellow-400">¡Recibes tus stickers al instante!</span> Generación automática</p>
+                                </div>
+                            </div>
+                            <div className="mt-4 bg-gradient-to-r from-yellow-600/20 to-amber-600/20 border border-yellow-500/50 rounded-xl p-3 flex items-center gap-3">
+                                <i data-lucide="send" className="w-6 h-6 text-yellow-400"></i>
+                                <p className="text-yellow-400 font-semibold text-sm">Los stickers se generan automáticamente al enviar tu comprobante</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="bg-gradient-to-br from-gray-800/50 to-gray-900/50 backdrop-blur-sm border-2 border-yellow-600/50 rounded-3xl p-8 shadow-2xl">
+                        <div className="text-center mb-6">
+                            <i data-lucide="gift" className="w-16 h-16 mx-auto mb-4 text-yellow-400"></i>
+                            <h2 className="text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 to-amber-600 mb-3">
+                                🎉 Stickers Sorpresa 🎉
+                            </h2>
+                            <p className="text-xl font-bold text-white mb-2">¡Uno de estos números ganará el GRAN PREMIO!</p>
+                            <p className="text-gray-300 font-semibold">2 Meses de Acompañamiento + $300,000 COP</p>
+                        </div>
+                        <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-6">
+                            {surpriseNumbers.map((num) => (
+                                <div 
+                                    key={num} 
+                                    className="bg-gradient-to-br from-yellow-500 via-amber-600 to-yellow-700 rounded-2xl p-6 text-center transform hover:scale-110 transition-all shadow-xl border-2 border-yellow-400"
+                                >
+                                    <p className="text-4xl font-bold text-black drop-shadow-lg">{num}</p>
+                                </div>
+                            ))}
+                        </div>
+                        <div className="bg-black/30 rounded-2xl p-4 border border-yellow-600/30">
+                            <p className="text-center font-bold text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 to-amber-600">
+                                💫 Si te toca uno de estos números, ¡GANAS EL GRAN PREMIO!
+                            </p>
+                        </div>
+                    </div>
+
+                    <div className="text-center mt-8 bg-gradient-to-br from-gray-800/50 to-gray-900/50 backdrop-blur-sm rounded-2xl p-6 border border-yellow-600/30">
+                        <p className="text-gray-400 font-semibold mb-2">📱 Proceso 100% Automático y Seguro</p>
+                        <p className="text-xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 to-amber-600">
+                            Harvey Sarmiento - Asesorías Profesionales
+                        </p>
+                    </div>
+                </div>
             </div>
-        `).join('');
+        );
     }
 
-    // Event listeners
-    document.getElementById('btnAgregar').addEventListener('click', agregarParticipante);
-    document.getElementById('nombreParticipante').addEventListener('keypress', (e) => {
-        if (e.key === 'Enter') agregarParticipante();
-    });
-    document.getElementById('btnArchivar').addEventListener('click', archivarSorteo);
-    document.getElementById('btnExportar').addEventListener('click', exportarDatos);
-    document.getElementById('nombreSorteo').addEventListener('input', (e) => {
-        nombreSorteo = e.target.value;
-        guardarDatos();
-    });
-    document.getElementById('busqueda').addEventListener('input', actualizarVista);
-    
-    document.querySelectorAll('.tab').forEach(tab => {
-        tab.addEventListener('click', () => cambiarVista(tab.dataset.tab));
-    });
+    const root = ReactDOM.createRoot(document.getElementById('root'));
+    root.render(<EventoOnline />);
 
-    // Inicializar
-    cargarDatos();
+    lucide.createIcons();
 </script>
 
 
